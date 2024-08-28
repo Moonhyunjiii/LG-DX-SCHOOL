@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+여기는 홈 페이지 입니다
+
+<div th:if="${success}" class="success">
+    <span th:text="${success}"></span>
+    <span th:text="${userName} + 님"></span>
+</div>
+
+
+<button onclick="location.href='/user/login'">로그인 화면으로 이동</button>
+<button onclick="location.href='/user/join'">회원가입 화면으로 이동</button>
+
+
+<!--<form action="/user/login" method="get">
+    <input type="submit" value="로그인 화면으로 이동">
+</form>
+
+<form action="/user/join" method="get">
+    <input type="submit" value="Join US ! ">
+</form>-->
+</body>
+</html>
