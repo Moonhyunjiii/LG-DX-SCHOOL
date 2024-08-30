@@ -38,7 +38,7 @@ function viewReview(reviewNo) {
         })
         .then(data => {
             // 리뷰 데이터 추출
-            const review = data.reivew;
+            const review = data.review;
             const images = data.images || [];
 
             // 제목과 내용 업데이트

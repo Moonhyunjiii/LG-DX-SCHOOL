@@ -135,7 +135,7 @@
                     </thead>
                     <tbody>
                     <!-- th:each로 서버에서 받은 데이터를 반복 출력 -->
-                    <tr th:each="review : ${reviews}">
+                    <tr th:each="review:${reviews}">
                         <td th:text="${review.reviewerId}">작성자</td>
                         <td><a href="#" th:text="${review.reviewTitle}" th:onclick="'viewReview(' + ${review.reviewNo} + ')'">제목</a></td>
                         <td th:text="${review.reviewContent}">내용</td>

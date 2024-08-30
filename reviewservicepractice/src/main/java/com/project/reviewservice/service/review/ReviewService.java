@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReviewService {
@@ -32,5 +33,10 @@ public class ReviewService {
         List<Review> reviews = reviewRepository.findAll();
         return reviews;
 
+    }
+
+    public Review findReviewByNo(int reviewNo) {
+        Optional<Review> review = reviewRepository.findById(reviewNo);
+        return review.orElse(null);
     }
 }

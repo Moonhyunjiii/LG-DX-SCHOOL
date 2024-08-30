@@ -41,4 +41,14 @@ public class ReviewServiceTest {
             System.out.println(review);
         }
     }
+
+    @Test
+    public void 특정_리뷰_조회_테스트() {
+        //given
+
+        //when
+        Review review = reviewService.findReviewByNo(100);
+        System.out.println(review);
+        //then
+    }
 }

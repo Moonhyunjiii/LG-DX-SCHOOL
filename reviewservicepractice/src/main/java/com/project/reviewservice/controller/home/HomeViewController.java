@@ -96,10 +96,10 @@ public class HomeViewController {
             session.setAttribute("username", user.getName());
             session.setAttribute("userId", userId);
             model.addAttribute("reviews", reviewService.findAllReviews());
-            return "/main";
+            return "redirect:/main";
         } else {
             model.addAttribute("error", "로그인에 실패했습니다.ㅠㅠ");
-            return "/login";
+            return "redirect:/login";
         }
     }
 
