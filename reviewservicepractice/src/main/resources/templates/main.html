@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Review Board" />
+    <meta name="author" content="" />
+    <title>리뷰페이지</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <style>
+.container-fluid {
+    max-width: 1200px; /* 컨테이너의 최대 너비를 설정 */
+    margin: 0 auto; /* 컨테이너를 가운데 정렬 */
+}
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.popup-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 800px; /* 조정된 최대 너비 */
+    width: 90%;
+    position: relative;
+}
+
+.image-slider {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 10px 0;
+}
+
+.image-slider img {
+    max-height: 150px;
+    object-fit: cover;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.image-slider img:hover {
+    transform: scale(1.1);
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+</style>
+</head>
+<body>
+    <main class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="mt-4">환영합니다. <span th:text="${username}"></span> 님</h1>
+
+            <div th:if="${username == 'admin'}">
+
+                <form id="analysisRequest" action="/review-analysis" method="post" style="display:inline;">
+                    날짜입력(yyyymmdd) : <input type="text" name="day" id="dayInput">
+                    <button  type="submit" class="btn btn-danger mb-4">분석 요청</button>
+                </form>
+
+            </div>
+
+            <a href="/main/custom-paging" onclick="alert('만드는중..^^')" class="btn btn-info mb-4">페이징 직접 구현 버전 보기</a>
+            <a href="/logout" class="btn btn-info mb-4">로그아웃</a>
+
+        </div>
+        <ol class="breadcrumb mb-4">
+            <li class="breadcrumb-item active">리뷰 게시판</li>
+        </ol>
+
+        <!-- 검색 창 중앙 정렬 -->
+        <!-- 검색 창과 리뷰 작성 버튼 -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="search-container d-flex" style="flex-grow: 1; margin-right: 10px;">
+                <div class="input-group" style="width: 100%;">
+                    <input class="form-control" type="text" placeholder="키워드 검색... 내용에 해당 키워드가 있는 리뷰를 검색합니다" aria-label="Search" aria-describedby="btnNavbarSearch" id="searchInput" />
+                    <button class="btn btn-primary" id="btnNavbarSearch" type="button" style="flex-shrink: 0; width: 120px;"><i class="fas fa-search"></i> 검색</button>
+                </div>
+            </div>
+
+            <!-- 리뷰 작성 버튼 -->
+            <button class="btn btn-primary" onclick="openPostPopup()">리뷰 작성</button>
+        </div>
+
+        <!-- 리뷰 테이블 -->
+        <div class="card mb-4 mt-4">
+            <div class="card-header">
+                <i class="fas me-1"></i>
+                아래 리뷰를 클릭해보세요.
+            </div>
+            <div class="card-body">
+
+                <table id="datatablesSimple">
+                    <thead>
+                    <tr>
+                        <th>작성자</th>
+                        <th>제목</th>
+                        <th>내용</th>
+                        <th>작성일</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- th:each로 서버에서 받은 데이터를 반복 출력 -->
+                    <tr th:each="review : ${reviews}">
+                        <td th:text="${review.reviewerId}">작성자</td>
+                        <td><a href="#" th:text="${review.reviewTitle}" th:onclick="'viewReview(' + ${review.reviewNo} + ')'">제목</a></td>
+                        <td th:text="${review.reviewContent}">내용</td>
+                        <td th:text="${review.reviewDate}">작성일</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+    </main>
+
+
+
+<!-- 리뷰 작성 팝업 -->
+<div id="postPopup" class="popup" style="display: none;">
+    <div class="popup-content">
+        <span class="close-button" onclick="closePostPopup()">&times;</span>
+        <h2>리뷰 작성</h2>
+        <form id="saveReview" action="/review/saveReview" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="postTitle" class="form-label">제목</label>
+                <input type="text" class="form-control" id="postTitle" name="title" required>
+            </div>
+            <div class="mb-3">
+                <label for="postContent" class="form-label">내용</label>
+                <textarea class="form-control" id="postContent" name="content" rows="4" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="postImages" class="form-label">이미지 업로드</label>
+                <input type="file" class="form-control" id="postImages" name="images" multiple>
+            </div>
+            <button type="submit" class="btn btn-primary">등록하기</button>
+            <button type="button" class="btn btn-secondary" onclick="closePostPopup()">취소</button>
+        </form>
+    </div>
+</div>
+
+
+<!-- 리뷰 보기 팝업 -->
+<div id="viewPopup" class="popup" style="display: none;">
+    <div class="popup-content">
+        <span class="close-button" onclick="closeViewPopup()">&times;</span>
+        <!-- 이미지 슬라이더 -->
+        <div id="viewImages" class="image-slider">
+            <!-- 이미지들이 여기에 동적으로 추가됩니다 -->
+        </div>
+        <!-- 리뷰 제목 -->
+        <h2 id="viewTitle"></h2>
+        <!-- 리뷰 내용 -->
+        <p id="viewContent"></p>
+        <button type="button" class="btn btn-secondary" onclick="closeViewPopup()">닫기</button>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="js/scripts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+<script src="js/datatables-simple-demo.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
