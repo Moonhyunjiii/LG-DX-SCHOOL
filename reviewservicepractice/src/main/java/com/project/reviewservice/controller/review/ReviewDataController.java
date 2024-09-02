@@ -6,6 +6,8 @@ import com.project.reviewservice.domain.review.Review;
 import com.project.reviewservice.service.image.ImageService;
 import com.project.reviewservice.service.review.ReviewService;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +25,15 @@ public class ReviewDataController {
     @Autowired
     ImageService imageService;
 
+    public static final Logger log = LoggerFactory.getLogger("com.project.reviewservice.controller.review.ReviewDataController.findReviewByNo");
+
     @GetMapping("/reviews/{reviewNo}")
-    public HashMap<String, Object> findReviewByNo(@PathVariable(name="reviewNo") Integer reviewNo) {
+    public HashMap<String, Object> findReviewByNo(@PathVariable(name="reviewNo") Integer reviewNo, HttpSession session) {
+
+        String username = (String) session.getAttribute("username");
+
+        log.info(username + " - " + reviewNo + " review click");
+
         HashMap<String, Object> data = new HashMap();
 
         // 지금 우리가 필요한 데이터

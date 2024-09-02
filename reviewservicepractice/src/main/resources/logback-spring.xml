@@ -1,0 +1,69 @@
+<configuration>
+    <!-- 클릭 이벤트를 위한 파일 Appender 설정 -->
+    <appender name="USER_REVIEW_CLICK_EVENT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/user_review_click_event.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/user_review_click_event.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 검색 이벤트를 위한 파일 Appender 설정 -->
+    <appender name="USER_REVIEW_SEARCH_EVENT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/user_review_search_event.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/user_review_search_event.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 리뷰 분석 요청에 대한 로그 설정 -->
+    <appender name="REVIEW_ANALYSIS_EVENT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/review_analysis_event.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/review_analysis_event.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <!-- 콘솔 출력을 위한 Appender 설정 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+
+    <!-- 각각의 Logger 설정 -->
+    <logger name="com.project.reviewservice.controller.review.ReviewDataController.findReviewByNo" level="INFO" additivity="false">
+        <appender-ref ref="USER_REVIEW_CLICK_EVENT" />
+        <appender-ref ref="CONSOLE" /> <!-- 콘솔에도 출력 -->
+    </logger>
+
+    <logger name="com.project.reviewservice.controller.review.ReviewDataController.findReviewBySearch" level="INFO" additivity="false">
+        <appender-ref ref="USER_REVIEW_SEARCH_EVENT" />
+        <appender-ref ref="CONSOLE" /> <!-- 콘솔에도 출력 -->
+    </logger>
+
+    <logger name="com.project.reviewservice.controller.analysis.AnalysisDataController" level="INFO" additivity="false">
+        <appender-ref ref="REVIEW_ANALYSIS_EVENT" />
+        <appender-ref ref="CONSOLE" /> <!-- 콘솔에도 출력 -->
+    </logger>
+
+
+    <root level="INFO">
+        <!-- 기본 콘솔 출력 -->
+        <appender-ref ref="CONSOLE" />
+    </root>
+</configuration>
